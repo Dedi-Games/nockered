@@ -1,5 +1,5 @@
 import InstanceManager from './InstanceManager'
-import { IDockerAPI } from './types/IDockerAPI'
+import { IDockerAPI } from './types'
 
 export class DockerAPI implements IDockerAPI {
   constructor(prefixUrl: string) {

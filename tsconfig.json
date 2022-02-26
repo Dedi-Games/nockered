@@ -1,12 +1,15 @@
 {
-  "extends": "@tsconfig/node16",
+  "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
-    "declaration": true,
+    "target": "ES2021",
+    "lib": [
+      "ES2021"
+    ],
     "removeComments": true,
     "outDir": "dist"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "include": [
+    "src",
+    "tests"
   ]
 }
