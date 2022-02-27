@@ -1,4 +1,4 @@
-import { operations } from '../specs/v1.41'
+import { operations } from '../specs/v1.41.js'
 
 export type GetResponseType<
   Obj extends keyof operations,

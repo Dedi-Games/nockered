@@ -1,6 +1,6 @@
-import { jsonEndpoint, streamEndpoint, stringEndpoint } from '../DockerAPI'
-import { GetParamType } from '../utils/GetParamType'
-import { GetResponseType } from '../utils/GetResponseType'
+import { jsonEndpoint, streamEndpoint, stringEndpoint } from '../DockerAPI.js'
+import { GetParamType } from '../utils/GetParamType.js'
+import { GetResponseType } from '../utils/GetResponseType.js'
 
 export class System {
   /**

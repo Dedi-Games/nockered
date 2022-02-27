@@ -1,9 +1,9 @@
 import { CancelableRequest, HTTPAlias, OptionsInit } from 'got'
-import InstanceManager from './InstanceManager'
-import { System } from './api/System'
-import { IDockerApi } from './types/IDockerApi'
+import InstanceManager from './InstanceManager.js'
+import { System } from './api/System.js'
+import { IDockerApi } from './types/IDockerApi.js'
 
-export class DockerAPI implements IDockerApi {
+export default class DockerAPI implements IDockerApi {
   public system = new System()
 
   constructor(prefixUrl: string) {

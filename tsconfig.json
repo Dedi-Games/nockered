@@ -5,7 +5,6 @@
     "lib": [
       "ES2021"
     ],
-    "removeComments": true,
     "outDir": "dist"
   },
   "include": [
