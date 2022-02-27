@@ -1,2 +1,2 @@
-# docker-sdk
+# node-docker-sdk
 A simple Docker SDK for Node.JS
