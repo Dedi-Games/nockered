@@ -1,10 +1,12 @@
 import { HTTPAlias, OptionsInit } from 'got'
 import InstanceManager from './InstanceManager.js'
+import { Containers } from './api/Containers.js'
 import { System } from './api/System.js'
 import { IDockerApi } from './types/IDockerApi.js'
 
 export default class DockerAPI implements IDockerApi {
   public system = new System()
+  public containers = new Containers()
 
   constructor(prefixUrl: string) {
     InstanceManager.setInstance(prefixUrl)
