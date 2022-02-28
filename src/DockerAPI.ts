@@ -1,4 +1,4 @@
-import { CancelableRequest, HTTPAlias, OptionsInit } from 'got'
+import { HTTPAlias, OptionsInit } from 'got'
 import InstanceManager from './InstanceManager.js'
 import { System } from './api/System.js'
 import { IDockerApi } from './types/IDockerApi.js'
@@ -21,8 +21,10 @@ export function jsonEndpoint<R = {}, P = OptionsInit>(
   method: HTTPAlias,
   endpoint: string,
   options?: P
-): CancelableRequest<R> {
-  return InstanceManager.getInstance()[method](endpoint, options).json<R>()
+): Promise<R> {
+  return InstanceManager.getInstance()
+    [method](endpoint, options)
+    .json() as Promise<R>
 }
 
 /**
@@ -35,8 +37,10 @@ export function stringEndpoint<P = OptionsInit>(
   method: HTTPAlias,
   endpoint: string,
   options?: P
-): CancelableRequest<string> {
-  return InstanceManager.getInstance()[method](endpoint, options).text()
+): Promise<string> {
+  return InstanceManager.getInstance()
+    [method](endpoint, options)
+    .text() as Promise<string>
 }
 
 /**
