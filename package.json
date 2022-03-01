@@ -1,6 +1,6 @@
 {
   "name": "node-docker-sdk",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "description": "A simple Docker SDK for Node.JS",
   "exports": "./dist/src/index.js",
