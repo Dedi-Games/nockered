@@ -41,7 +41,7 @@
       "--experimental-specifier-resolution=node"
     ]
   },
-  "repository": "https://github.com/Leafgard/node-docker-sdk.git",
+  "repository": "https://github.com/Node-Docker-SDK/node-docker-sdk",
   "author": "Yann SEGET <dev@leafgard.fr>",
   "keywords": [
     "node",
