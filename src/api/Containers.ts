@@ -4,7 +4,11 @@ import { GetParamType } from '../utils/GetParamType.js'
 import { GetResponseType } from '../utils/GetResponseType.js'
 
 export class Containers {
-  async listContainers(query?: GetParamType<'ContainerList'>['query']) {
+  /**
+   * List containers
+   * @description Returns a list of containers. For details on the format, see the inspect endpoint.
+   */
+  static async listContainers(query?: GetParamType<'ContainerList'>['query']) {
     const containers = await jsonEndpoint<
       GetResponseType<'ContainerList', 200>
     >('get', 'containers/json', { searchParams: query })
