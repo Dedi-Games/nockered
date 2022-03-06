@@ -1,3 +1,4 @@
+import { Containers } from '../api/Containers.js'
 import { jsonEndpoint } from '../DockerAPI.js'
 import { definitions } from '../specs/v1.41.js'
 import { GetParamType } from '../utils/GetParamType.js'
@@ -29,6 +30,17 @@ export class Container implements Required<ContainerSummary> {
 
   constructor(props: Required<ContainerSummary>) {
     Object.assign(this, props)
+  }
+
+  /**
+   * Get container by ID
+   * @param id Container ID
+   */
+  static async get(id: string) {
+    const containers = await Containers.listContainers({
+      filters: JSON.stringify({ id: [id] })
+    })
+    return containers[0]
   }
 
   /**
