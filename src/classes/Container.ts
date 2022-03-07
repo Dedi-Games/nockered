@@ -70,4 +70,18 @@ export class Container implements Required<ContainerSummary> {
       }
     )
   }
+
+  /**
+   * Remove a container
+   * TODO: Add test
+   */
+  delete(query?: GetParamType<'ContainerDelete'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerDelete', 204>>(
+      'delete',
+      `containers/${this.Id}`,
+      {
+        searchParams: query
+      }
+    )
+  }
 }
