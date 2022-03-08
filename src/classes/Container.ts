@@ -84,4 +84,18 @@ export class Container implements Required<ContainerSummary> {
       }
     )
   }
+
+  /**
+   * Rename a container
+   * TODO: Add test
+   */
+  rename(query?: GetParamType<'ContainerRename'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerRename', 204>>(
+      'post',
+      `containers/${this.Id}/rename`,
+      {
+        searchParams: query
+      }
+    )
+  }
 }
