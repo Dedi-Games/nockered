@@ -72,7 +72,7 @@ export class Container implements Required<ContainerSummary> {
   }
 
   /**
-   * Remove a container
+   * Remove the container
    * TODO: Add test
    */
   delete(query?: GetParamType<'ContainerDelete'>['query']) {
@@ -86,13 +86,27 @@ export class Container implements Required<ContainerSummary> {
   }
 
   /**
-   * Rename a container
+   * Rename the container
    * TODO: Add test
-   */
+a   */
   rename(query?: GetParamType<'ContainerRename'>['query']) {
     return jsonEndpoint<GetResponseType<'ContainerRename', 204>>(
       'post',
       `containers/${this.Id}/rename`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Start the container
+   * TODO: Add test
+   */
+  start(query?: GetParamType<'ContainerStart'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerStart', 204>>(
+      'post',
+      `containers/${this.Id}/start`,
       {
         searchParams: query
       }
