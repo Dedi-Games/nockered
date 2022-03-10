@@ -112,4 +112,18 @@ a   */
       }
     )
   }
+
+  /**
+   * Stop the container
+   * TODO: Add test
+   */
+  stop(query?: GetParamType<'ContainerStop'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerStop', 204>>(
+      'post',
+      `containers/${this.Id}/stop`,
+      {
+        searchParams: query
+      }
+    )
+  }
 }
