@@ -126,4 +126,18 @@ export class Container implements Required<ContainerSummary> {
       }
     )
   }
+
+  /**
+   * Kill the container
+   * TODO: Add test
+   */
+  kill(query?: GetParamType<'ContainerKill'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerKill', 204>>(
+      'post',
+      `containers/${this.Id}/kill`,
+      {
+        searchParams: query
+      }
+    )
+  }
 }
