@@ -140,4 +140,15 @@ export class Container implements Required<ContainerSummary> {
       }
     )
   }
+
+  /**
+   * Pause the container
+   * TODO: Add test
+   */
+  pause() {
+    return jsonEndpoint<GetResponseType<'ContainerPause', 204>>(
+      'post',
+      `containers/${this.Id}/pause`
+    )
+  }
 }
