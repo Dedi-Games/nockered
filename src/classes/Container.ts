@@ -153,6 +153,20 @@ export class Container implements Required<ContainerSummary> {
   }
 
   /**
+   * Wait the container
+   * TODO: Add test
+   */
+  wait(query?: GetParamType<'ContainerWait'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerWait', 200>>(
+      'post',
+      `containers/${this.Id}/wait`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
    * Unpause the container
    * TODO: Add test
    */
