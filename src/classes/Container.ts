@@ -176,4 +176,15 @@ export class Container implements Required<ContainerSummary> {
       `containers/${this.Id}/unpause`
     )
   }
+
+  /**
+   * Export the container
+   * TODO: Add test
+   */
+  export() {
+    return jsonEndpoint<GetResponseType<'ContainerExport', 200>>(
+      'get',
+      `containers/${this.Id}/export`
+    )
+  }
 }
