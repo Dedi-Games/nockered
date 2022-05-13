@@ -1,5 +1,5 @@
 {
-  "name": "node-docker-sdk",
+  "name": "@nockered/sdk",
   "version": "0.2.3",
   "license": "MIT",
   "description": "A simple Docker SDK for Node.JS",
@@ -41,7 +41,7 @@
       "--experimental-specifier-resolution=node"
     ]
   },
-  "repository": "https://github.com/Node-Docker-SDK/node-docker-sdk",
+  "repository": "https://github.com/Nockered/sdk",
   "author": "Yann SEGET <dev@leafgard.fr>",
   "keywords": [
     "node",
