@@ -2,7 +2,7 @@ import { jsonEndpoint } from '../DockerAPI.js'
 import { definitions } from '../specs/v1.41.js'
 import { GetParamType } from '../utils/GetParamType.js'
 import { GetResponseType } from '../utils/GetResponseType.js'
-import { AbstractEndpoint } from './AbstractEndpoint'
+import { AbstractEndpoint } from './AbstractEndpoint.js'
 
 export type ContainerSummary = definitions['ContainerSummary']
 type Mount = definitions['Mount']
@@ -40,17 +40,6 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
       (containerConfig) =>
         new Container(containerConfig as Required<ContainerSummary>)
     )
-  }
-
-  /**
-   * Get container by ID
-   * @param id Container ID
-   */
-  static async get(id: string) {
-    const containers = await Container.listContainers({
-      filters: JSON.stringify({ id: [id] })
-    })
-    return containers[0]
   }
 
   /**
