@@ -2,7 +2,7 @@ import { jsonEndpoint, streamEndpoint, stringEndpoint } from '../DockerAPI.js'
 import { GetParamType } from '../utils/GetParamType.js'
 import { GetResponseType } from '../utils/GetResponseType.js'
 
-export class Systems {
+export class System {
   /**
    * Check auth configuration
    * @description Validate credentials for a registry and, if available, get an identity token for accessing the registry without password.

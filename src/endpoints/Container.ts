@@ -1,15 +1,15 @@
-import { Containers } from '../api/Containers.js'
 import { jsonEndpoint } from '../DockerAPI.js'
 import { definitions } from '../specs/v1.41.js'
 import { GetParamType } from '../utils/GetParamType.js'
 import { GetResponseType } from '../utils/GetResponseType.js'
+import { AbstractEndpoint } from './AbstractEndpoint'
 
 export type ContainerSummary = definitions['ContainerSummary']
 type Mount = definitions['Mount']
 type EndpointSettings = definitions['EndpointSettings']
 type Port = definitions['Port']
 
-export class Container implements Required<ContainerSummary> {
+export class Container extends AbstractEndpoint<ContainerSummary> {
   public Command!: string
   public Created!: number
   public HostConfig!: { NetworkMode?: string }
@@ -28,8 +28,18 @@ export class Container implements Required<ContainerSummary> {
   public State!: string
   public Status!: string
 
-  constructor(props: Required<ContainerSummary>) {
-    Object.assign(this, props)
+  /**
+   * List containers
+   * @description Returns a list of containers. For details on the format, see the inspect endpoint.
+   */
+  static async listContainers(query?: GetParamType<'ContainerList'>['query']) {
+    const containers = await jsonEndpoint<
+      GetResponseType<'ContainerList', 200>
+    >('get', 'containers/json', { searchParams: query })
+    return containers.map(
+      (containerConfig) =>
+        new Container(containerConfig as Required<ContainerSummary>)
+    )
   }
 
   /**
@@ -37,7 +47,7 @@ export class Container implements Required<ContainerSummary> {
    * @param id Container ID
    */
   static async get(id: string) {
-    const containers = await Containers.listContainers({
+    const containers = await Container.listContainers({
       filters: JSON.stringify({ id: [id] })
     })
     return containers[0]
