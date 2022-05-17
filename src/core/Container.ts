@@ -31,25 +31,67 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
   /**
    * List containers
    * @description Returns a list of containers. For details on the format, see the inspect endpoint.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerList
    */
-  static async listContainers(query?: GetParamType<'ContainerList'>['query']) {
-    const containers = await jsonEndpoint<
-      GetResponseType<'ContainerList', 200>
-    >('get', 'containers/json', { searchParams: query })
-    return containers.map(
-      (containerConfig) =>
-        new Container(containerConfig as Required<ContainerSummary>)
+  static list(query?: GetParamType<'ContainerList'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerList', 200>>(
+      'get',
+      'containers/json',
+      { searchParams: query }
+    )
+  }
+
+  /**
+   * Create a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerCreate
+   */
+  static create(query: GetParamType<'ContainerCreate'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerCreate', 201>>(
+      'post',
+      'containers/create',
+      { searchParams: query }
+    )
+  }
+
+  /**
+   * Inspect a container
+   * @description Returns low-level information about a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerInspect
+   */
+  static inspect(
+    path: GetParamType<'ContainerInspect'>['path'],
+    query?: GetParamType<'ContainerInspect'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerInspect', 200>>(
+      'get',
+      `containers/${path.id}/json`,
+      {
+        searchParams: query
+      }
     )
   }
 
   /**
    * Inspect a container
    * @description Return low-level information about a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerInspect
    */
   inspect(query?: GetParamType<'ContainerInspect'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerInspect', 200>>(
+    return Container.inspect({ id: this.Id }, query)
+  }
+
+  /**
+   * List processes running inside a container
+   * @description On Unix systems, this is done by running the ps command. This endpoint is not supported on Windows.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerTop
+   */
+  static top(
+    path: GetParamType<'ContainerTop'>['path'],
+    query?: GetParamType<'ContainerTop'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerTop', 200>>(
       'get',
-      `containers/${this.Id}/json`,
+      `containers/${path.id}/top`,
       {
         searchParams: query
       }
@@ -59,11 +101,24 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
   /**
    * List processes running inside a container
    * @description On Unix systems, this is done by running the ps command. This endpoint is not supported on Windows.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerTop
    */
   top(query?: GetParamType<'ContainerTop'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerTop', 200>>(
+    return Container.top({ id: this.Id }, query)
+  }
+
+  /**
+   * Get container logs
+   * @description Returns the logs of a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerLogs
+   */
+  static logs(
+    path: GetParamType<'ContainerLogs'>['path'],
+    query?: GetParamType<'ContainerLogs'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerLogs', 200>>(
       'get',
-      `containers/${this.Id}/top`,
+      `containers/${path.id}/logs`,
       {
         searchParams: query
       }
@@ -71,119 +126,359 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
   }
 
   /**
-   * Remove the container
-   * TODO: Add test
+   * Get container logs
+   * @description Returns the logs of a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerLogs
    */
-  delete(query?: GetParamType<'ContainerDelete'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerDelete', 204>>(
-      'delete',
-      `containers/${this.Id}`,
-      {
-        searchParams: query
-      }
+  logs(query?: GetParamType<'ContainerLogs'>['query']) {
+    return Container.logs({ id: this.Id }, query)
+  }
+
+  /**
+   * Get changes on a container’s filesystem
+   * @description Returns which files in a container's filesystem have been added, deleted, or modified. The Kind of modification can be one of:
+   * - 0: Modified
+   * - 1: Added
+   * - 2: Deleted
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerChanges
+   */
+  static changes(path: GetParamType<'ContainerChanges'>['path']) {
+    return jsonEndpoint<GetResponseType<'ContainerChanges', 200>>(
+      'get',
+      `containers/${path.id}/changes`
     )
   }
 
   /**
-   * Rename the container
-   * TODO: Add test
+   * Get changes on a container’s filesystem
+   * @description Returns which files in a container's filesystem have been added, deleted, or modified. The Kind of modification can be one of:
+   * - 0: Modified
+   * - 1: Added
+   * - 2: Deleted
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerChanges
    */
-  rename(query?: GetParamType<'ContainerRename'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerRename', 204>>(
-      'post',
-      `containers/${this.Id}/rename`,
-      {
-        searchParams: query
-      }
-    )
+  changes() {
+    return Container.changes({ id: this.Id })
   }
 
   /**
-   * Start the container
-   * TODO: Add test
+   * Export a container
+   * @description Export the contents of a container as a tarball.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerExport
    */
-  start(query?: GetParamType<'ContainerStart'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerStart', 204>>(
-      'post',
-      `containers/${this.Id}/start`,
-      {
-        searchParams: query
-      }
-    )
-  }
-
-  /**
-   * Stop the container
-   * TODO: Add test
-   */
-  stop(query?: GetParamType<'ContainerStop'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerStop', 204>>(
-      'post',
-      `containers/${this.Id}/stop`,
-      {
-        searchParams: query
-      }
-    )
-  }
-
-  /**
-   * Kill the container
-   * TODO: Add test
-   */
-  kill(query?: GetParamType<'ContainerKill'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerKill', 204>>(
-      'post',
-      `containers/${this.Id}/kill`,
-      {
-        searchParams: query
-      }
-    )
-  }
-
-  /**
-   * Pause the container
-   * TODO: Add test
-   */
-  pause() {
-    return jsonEndpoint<GetResponseType<'ContainerPause', 204>>(
-      'post',
-      `containers/${this.Id}/pause`
-    )
-  }
-
-  /**
-   * Wait the container
-   * TODO: Add test
-   */
-  wait(query?: GetParamType<'ContainerWait'>['query']) {
-    return jsonEndpoint<GetResponseType<'ContainerWait', 200>>(
-      'post',
-      `containers/${this.Id}/wait`,
-      {
-        searchParams: query
-      }
-    )
-  }
-
-  /**
-   * Unpause the container
-   * TODO: Add test
-   */
-  unpause() {
-    return jsonEndpoint<GetResponseType<'ContainerUnpause', 204>>(
-      'post',
-      `containers/${this.Id}/unpause`
-    )
-  }
-
-  /**
-   * Export the container
-   * TODO: Add test
-   */
-  export() {
+  static export(path: GetParamType<'ContainerExport'>['path']) {
     return jsonEndpoint<GetResponseType<'ContainerExport', 200>>(
       'get',
-      `containers/${this.Id}/export`
+      `containers/${path.id}/export`
     )
+  }
+
+  /**
+   * Export a container
+   * @description Export the contents of a container as a tarball.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerExport
+   */
+  export() {
+    return Container.export({ id: this.Id })
+  }
+
+  /**
+   * Get container stats based on resource usage
+   * @description This endpoint returns a live stream of a container’s resource usage statistics.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStats
+   */
+  static stats(
+    path: GetParamType<'ContainerStats'>['path'],
+    query?: GetParamType<'ContainerStats'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerStats', 200>>(
+      'get',
+      `containers/${path.id}/stats`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Get container stats based on resource usage
+   * @description This endpoint returns a live stream of a container’s resource usage statistics.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStats
+   */
+  stats(query?: GetParamType<'ContainerStats'>['query']) {
+    return Container.stats({ id: this.Id }, query)
+  }
+
+  /**
+   * Resize a container TTY
+   * @description Resize the TTY for a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerResize
+   */
+  static resize(
+    path: GetParamType<'ContainerResize'>['path'],
+    query?: GetParamType<'ContainerResize'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerResize', 200>>(
+      'post',
+      `containers/${path.id}/resize`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Resize a container TTY
+   * @description Resize the TTY for a container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerResize
+   */
+  resize(query?: GetParamType<'ContainerResize'>['query']) {
+    return Container.resize({ id: this.Id }, query)
+  }
+
+  /**
+   * Start a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStart
+   */
+  static start(
+    path: GetParamType<'ContainerStart'>['path'],
+    query?: GetParamType<'ContainerStart'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerStart', 204>>(
+      'post',
+      `containers/${path.id}/start`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Start a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStart
+   */
+  start(query?: GetParamType<'ContainerStart'>['query']) {
+    return Container.start({ id: this.Id }, query)
+  }
+
+  /**
+   * Stop a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStop
+   */
+  static stop(
+    path: GetParamType<'ContainerStop'>['path'],
+    query?: GetParamType<'ContainerStop'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerStop', 204>>(
+      'post',
+      `containers/${path.id}/stop`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Stop a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerStop
+   */
+  stop(query?: GetParamType<'ContainerStop'>['query']) {
+    return Container.stop({ id: this.Id }, query)
+  }
+
+  /**
+   * Restart a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRestart
+   */
+  static restart(
+    path: GetParamType<'ContainerRestart'>['path'],
+    query?: GetParamType<'ContainerRestart'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerRestart', 204>>(
+      'post',
+      `containers/${path.id}/restart`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Restart a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRestart
+   */
+  restart(query?: GetParamType<'ContainerRestart'>['query']) {
+    return Container.restart({ id: this.Id }, query)
+  }
+
+  /**
+   * Kill a container
+   * @description Send a POSIX signal to a container, defaulting to killing to the container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerKill
+   */
+  static kill(
+    path: GetParamType<'ContainerKill'>['path'],
+    query?: GetParamType<'ContainerKill'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerKill', 204>>(
+      'post',
+      `containers/${path.id}/kill`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Kill a container
+   * @description Send a POSIX signal to a container, defaulting to killing to the container.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerKill
+   */
+  kill(query?: GetParamType<'ContainerKill'>['query']) {
+    return Container.kill({ id: this.Id }, query)
+  }
+
+  /**
+   * Update a container
+   * @description Change various configuration options of a container without having to recreate it.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerUpdate
+   */
+  static update(
+    path: GetParamType<'ContainerUpdate'>['path'],
+    body?: GetParamType<'ContainerUpdate'>['body']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerUpdate', 200>>(
+      'post',
+      `containers/${path.id}/update`,
+      {
+        json: body
+      }
+    )
+  }
+
+  /**
+   * Update a container
+   * @description Change various configuration options of a container without having to recreate it.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerUpdate
+   */
+  update(body?: GetParamType<'ContainerUpdate'>['body']) {
+    return Container.update({ id: this.Id }, body)
+  }
+
+  /**
+   * Rename a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRename
+   */
+  static rename(
+    path: GetParamType<'ContainerRename'>['path'],
+    query?: GetParamType<'ContainerRename'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerRename', 204>>(
+      'post',
+      `containers/${path.id}/rename`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Rename a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRename
+   */
+  rename(query?: GetParamType<'ContainerRename'>['query']) {
+    return Container.rename({ id: this.Id }, query)
+  }
+
+  /**
+   * Pause a container
+   * @description Use the freezer cgroup to suspend all processes in a container.
+   * Traditionally, when suspending a process the SIGSTOP signal is used, which is observable by the process being suspended.
+   * With the freezer cgroup the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerPause
+   */
+  static pause(path: GetParamType<'ContainerPause'>['path']) {
+    return jsonEndpoint<GetResponseType<'ContainerPause', 204>>(
+      'post',
+      `containers/${path.id}/pause`
+    )
+  }
+
+  /**
+   * Pause a container
+   * @description Use the freezer cgroup to suspend all processes in a container.
+   * Traditionally, when suspending a process the SIGSTOP signal is used, which is observable by the process being suspended.
+   * With the freezer cgroup the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerPause
+   */
+  pause() {
+    return Container.pause({ id: this.Id })
+  }
+
+  /**
+   * Unpause a container
+   * @description Resume a container which has been paused.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerUnpause
+   */
+  static unpause(path: GetParamType<'ContainerUnpause'>['path']) {
+    return jsonEndpoint<GetResponseType<'ContainerUnpause', 204>>(
+      'post',
+      `containers/${path.id}/unpause`
+    )
+  }
+
+  /**
+   * Unpause a container
+   * @description Resume a container which has been paused.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerUnpause
+   */
+  unpause() {
+    return Container.unpause({ id: this.Id })
+  }
+
+  /**
+   * Wait for a container
+   * @description Block until a container stops, then returns the exit code.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerWait
+   */
+  static wait(path: GetParamType<'ContainerWait'>['path']) {
+    return jsonEndpoint<GetResponseType<'ContainerWait', 200>>(
+      'post',
+      `containers/${path.id}/wait`
+    )
+  }
+
+  /**
+   * Wait for a container
+   * @description Block until a container stops, then returns the exit code.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerWait
+   */
+  wait() {
+    return Container.wait({ id: this.Id })
+  }
+
+  /**
+   * Remove a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRemove
+   */
+  static remove(
+    path: GetParamType<'ContainerDelete'>['path'],
+    query?: GetParamType<'ContainerDelete'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerDelete', 204>>(
+      'delete',
+      `containers/${path.id}`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Remove a container
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRemove
+   */
+  remove(query?: GetParamType<'ContainerDelete'>['query']) {
+    return Container.remove({ id: this.Id }, query)
   }
 }
