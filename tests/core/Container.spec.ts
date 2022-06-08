@@ -1,8 +1,8 @@
 import ava, { TestFn } from 'ava'
 
-import { DockerAPI } from '../../src'
-import { Container } from '../../src/core/Container'
-import { TestExecutionContext } from '../../src/types/TestExecutionContext'
+import DockerAPI from '../../src/index.js'
+import { Container } from '../../src/core/Container.js'
+import { TestExecutionContext } from '../../src/types/TestExecutionContext.js'
 
 const test = ava as TestFn<TestExecutionContext>
 
