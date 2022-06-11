@@ -277,3 +277,6 @@ fabric.properties
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node,yarn,macos,webstorm+all
+
+# c8
+coverage/
