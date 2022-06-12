@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
     - name: Get Docker version
-      run: docker version
+      run: docker version && docker pull ubuntu
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Build the source code
