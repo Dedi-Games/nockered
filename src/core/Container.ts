@@ -1,4 +1,4 @@
-import { jsonEndpoint } from '../DockerAPI.js'
+import { jsonEndpoint, streamEndpoint } from '../DockerAPI.js'
 import { definitions } from '../specs/v1.41.js'
 import { GetParamType } from '../utils/GetParamType.js'
 import { GetResponseType } from '../utils/GetResponseType.js'
@@ -45,11 +45,17 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    * Create a container
    * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerCreate
    */
-  static create(query: GetParamType<'ContainerCreate'>['query']) {
+  static create(
+    query: GetParamType<'ContainerCreate'>['query'],
+    body: GetParamType<'ContainerCreate'>['body']['body']
+  ) {
     return jsonEndpoint<GetResponseType<'ContainerCreate', 201>>(
       'post',
       'containers/create',
-      { searchParams: query }
+      {
+        searchParams: query,
+        json: body
+      }
     )
   }
 
@@ -116,13 +122,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
     path: GetParamType<'ContainerLogs'>['path'],
     query?: GetParamType<'ContainerLogs'>['query']
   ) {
-    return jsonEndpoint<GetResponseType<'ContainerLogs', 200>>(
-      'get',
-      `containers/${path.id}/logs`,
-      {
-        searchParams: query
-      }
-    )
+    return streamEndpoint(`containers/${path.id}/logs`, { searchParams: query })
   }
 
   /**
@@ -167,8 +167,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerExport
    */
   static export(path: GetParamType<'ContainerExport'>['path']) {
-    return jsonEndpoint<GetResponseType<'ContainerExport', 200>>(
-      'get',
+    return streamEndpoint<GetResponseType<'ContainerExport', 200>>(
       `containers/${path.id}/export`
     )
   }
@@ -191,8 +190,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
     path: GetParamType<'ContainerStats'>['path'],
     query?: GetParamType<'ContainerStats'>['query']
   ) {
-    return jsonEndpoint<GetResponseType<'ContainerStats', 200>>(
-      'get',
+    return streamEndpoint<GetResponseType<'ContainerStats', 200>>(
       `containers/${path.id}/stats`,
       {
         searchParams: query
@@ -480,5 +478,46 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    */
   remove(query?: GetParamType<'ContainerDelete'>['query']) {
     return Container.remove({ id: this.Id }, query)
+  }
+
+  /**
+   * Get information about files in a container
+   * @description A response header X-Docker-Container-Path-Stat is returned, containing a base64 - encoded JSON object with some filesystem header information about the path.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchiveInfo
+   */
+  static archive(
+    path: GetParamType<'ContainerArchiveInfo'>['path'],
+    query?: GetParamType<'ContainerArchiveInfo'>['query']
+  ) {
+    return jsonEndpoint<GetResponseType<'ContainerArchiveInfo', 200>>(
+      'head',
+      `containers/${path.id}/archive`,
+      {
+        searchParams: query
+      }
+    )
+  }
+
+  /**
+   * Get information about files in a container
+   * @description A response header X-Docker-Container-Path-Stat is returned, containing a base64 - encoded JSON object with some filesystem header information about the path.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchiveInfo
+   */
+  archive(query?: GetParamType<'ContainerArchiveInfo'>['query']) {
+    return Container.archive({ id: this.Id }, query)
+  }
+
+  /**
+   * Delete stopped containers
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerPrune
+   */
+  static prune(query?: GetParamType<'ContainerPrune'>['query']) {
+    return jsonEndpoint<GetResponseType<'ContainerPrune', 200>>(
+      'post',
+      `containers/prune`,
+      {
+        searchParams: query
+      }
+    )
   }
 }
