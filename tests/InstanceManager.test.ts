@@ -4,7 +4,7 @@ import { TestExecutionContext } from '../src/types/TestExecutionContext.js'
 
 const test = ava as TestFn<TestExecutionContext>
 
-test('getInstance() without having set one', async (t) => {
+test('static getInstance() without having set one', async (t) => {
   const instance = InstanceManager.getInstance()
   t.true(instance instanceof Object)
 })

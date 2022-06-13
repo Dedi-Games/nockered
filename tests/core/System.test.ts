@@ -10,7 +10,7 @@ test.beforeEach((t) => {
   t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
 })
 
-test('checkAuthConfiguration()', async (t) => {
+test('static checkAuthConfiguration()', async (t) => {
   const resp = await System.checkAuthConfiguration({
     username: 'hannibal',
     password: 'xxxx',
@@ -19,34 +19,27 @@ test('checkAuthConfiguration()', async (t) => {
   t.is(typeof resp.Status, 'string')
 })
 
-test('getSystemInformation()', async (t) => {
+test('static getSystemInformation()', async (t) => {
   const resp = await System.getSystemInformation()
   t.is(typeof resp.ID, 'string')
 })
 
-test('getVersion()', async (t) => {
+test('static getVersion()', async (t) => {
   const resp = await System.getVersion()
   t.is(typeof resp.Version, 'string')
 })
 
-test('ping()', async (t) => {
+test('static ping()', async (t) => {
   const resp = await System.ping()
   t.is(typeof resp, 'string')
 })
 
-test('ping() with method', async (t) => {
+test('static ping() with method', async (t) => {
   const resp = await System.ping('head')
   t.is(typeof resp, 'string')
 })
 
-test('monitorEvents()', async (t) => {
-  const resp = await System.monitorEvents()
-  t.true(resp.readable)
-  resp.destroy()
-  t.false(resp.readable)
-})
-
-test('monitorEvents() with query', async (t) => {
+test('static monitorEvents()', async (t) => {
   const since = new Date()
   const until = new Date(since)
   until.setMinutes(since.getMinutes() + 1)
@@ -60,7 +53,7 @@ test('monitorEvents() with query', async (t) => {
   t.false(resp.readable)
 })
 
-test('getDataUsageInformation()', async (t) => {
+test('static getDataUsageInformation()', async (t) => {
   const resp = await System.getDataUsageInformation()
   t.is(typeof resp.LayersSize, 'number')
 })
