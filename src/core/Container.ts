@@ -343,7 +343,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    */
   static update(
     path: GetParamType<'ContainerUpdate'>['path'],
-    body?: GetParamType<'ContainerUpdate'>['body']
+    body?: GetParamType<'ContainerUpdate'>['body']['update']
   ) {
     return jsonEndpoint<GetResponseType<'ContainerUpdate', 200>>(
       'post',
@@ -359,7 +359,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    * @description Change various configuration options of a container without having to recreate it.
    * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerUpdate
    */
-  update(body?: GetParamType<'ContainerUpdate'>['body']) {
+  update(body?: GetParamType<'ContainerUpdate'>['body']['update']) {
     return Container.update({ id: this.Id }, body)
   }
 
@@ -489,8 +489,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
     path: GetParamType<'ContainerArchiveInfo'>['path'],
     query?: GetParamType<'ContainerArchiveInfo'>['query']
   ) {
-    return jsonEndpoint<GetResponseType<'ContainerArchiveInfo', 200>>(
-      'head',
+    return streamEndpoint<GetResponseType<'ContainerArchiveInfo', 200>>(
       `containers/${path.id}/archive`,
       {
         searchParams: query
