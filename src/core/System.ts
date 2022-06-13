@@ -34,10 +34,17 @@ export class System {
   /**
    * Ping
    * @description This is a dummy endpoint you can use to test if the server is accessible.
-   * @param method HTTP method to use
    */
-  static ping(method: 'get' | 'head' = 'get') {
-    return stringEndpoint<GetResponseType<'SystemPing', 200>>(method, '_ping')
+  static getPing() {
+    return stringEndpoint<GetResponseType<'SystemPing', 200>>('get', '_ping')
+  }
+
+  /**
+   * Ping
+   * @description This is a dummy endpoint you can use to test if the server is accessible.
+   */
+  static headPing() {
+    return stringEndpoint<GetResponseType<'SystemPing', 200>>('head', '_ping')
   }
 
   /**
