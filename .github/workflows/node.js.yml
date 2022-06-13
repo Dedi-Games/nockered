@@ -23,7 +23,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
     - name: Get Docker version
       run: docker version && docker pull ubuntu
     - name: Install dependencies
