@@ -35,7 +35,7 @@ export class System {
    * Ping
    * @description This is a dummy endpoint you can use to test if the server is accessible.
    */
-  static getPing() {
+  static ping() {
     return stringEndpoint<GetResponseType<'SystemPing', 200>>('get', '_ping')
   }
 
@@ -43,8 +43,11 @@ export class System {
    * Ping
    * @description This is a dummy endpoint you can use to test if the server is accessible.
    */
-  static headPing() {
-    return stringEndpoint<GetResponseType<'SystemPing', 200>>('head', '_ping')
+  static pingHead() {
+    return stringEndpoint<GetResponseType<'SystemPingHead', 200>>(
+      'head',
+      '_ping'
+    )
   }
 
   /**

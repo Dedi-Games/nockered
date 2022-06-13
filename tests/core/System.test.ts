@@ -29,13 +29,13 @@ test('static getVersion()', async (t) => {
   t.is(typeof resp.Version, 'string')
 })
 
-test('static getPing()', async (t) => {
-  const resp = await System.getPing()
+test('static ping()', async (t) => {
+  const resp = await System.ping()
   t.is(typeof resp, 'string')
 })
 
-test('static headPing()', async (t) => {
-  const resp = await System.headPing()
+test('static pingHead()', async (t) => {
+  const resp = await System.pingHead()
   t.is(typeof resp, 'string')
 })
 
