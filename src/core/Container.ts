@@ -122,7 +122,9 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
     path: GetParamType<'ContainerLogs'>['path'],
     query?: GetParamType<'ContainerLogs'>['query']
   ) {
-    return streamEndpoint(`containers/${path.id}/logs`, { searchParams: query })
+    return streamEndpoint('get', `containers/${path.id}/logs`, {
+      searchParams: query
+    })
   }
 
   /**
@@ -168,6 +170,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    */
   static export(path: GetParamType<'ContainerExport'>['path']) {
     return streamEndpoint<GetResponseType<'ContainerExport', 200>>(
+      'get',
       `containers/${path.id}/export`
     )
   }
@@ -191,6 +194,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
     query?: GetParamType<'ContainerStats'>['query']
   ) {
     return streamEndpoint<GetResponseType<'ContainerStats', 200>>(
+      'get',
       `containers/${path.id}/stats`,
       {
         searchParams: query
@@ -459,7 +463,7 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    * Remove a container
    * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRemove
    */
-  static remove(
+  static delete(
     path: GetParamType<'ContainerDelete'>['path'],
     query?: GetParamType<'ContainerDelete'>['query']
   ) {
@@ -476,20 +480,21 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
    * Remove a container
    * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerRemove
    */
-  remove(query?: GetParamType<'ContainerDelete'>['query']) {
-    return Container.remove({ id: this.Id }, query)
+  delete(query?: GetParamType<'ContainerDelete'>['query']) {
+    return Container.delete({ id: this.Id }, query)
   }
 
   /**
-   * Get information about files in a container
-   * @description A response header X-Docker-Container-Path-Stat is returned, containing a base64 - encoded JSON object with some filesystem header information about the path.
-   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchiveInfo
+   * Get an archive of a filesystem resource in a container
+   * @description Get a tar archive of a resource in the filesystem of container id.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchive
    */
   static archive(
-    path: GetParamType<'ContainerArchiveInfo'>['path'],
-    query?: GetParamType<'ContainerArchiveInfo'>['query']
+    path: GetParamType<'ContainerArchive'>['path'],
+    query?: GetParamType<'ContainerArchive'>['query']
   ) {
-    return streamEndpoint<GetResponseType<'ContainerArchiveInfo', 200>>(
+    return streamEndpoint<GetResponseType<'ContainerArchive', 200>>(
+      'get',
       `containers/${path.id}/archive`,
       {
         searchParams: query
@@ -498,11 +503,11 @@ export class Container extends AbstractEndpoint<ContainerSummary> {
   }
 
   /**
-   * Get information about files in a container
-   * @description A response header X-Docker-Container-Path-Stat is returned, containing a base64 - encoded JSON object with some filesystem header information about the path.
-   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchiveInfo
+   * Get an archive of a filesystem resource in a container
+   * @description Get a tar archive of a resource in the filesystem of container id.
+   * @link https://docs.docker.com/engine/api/v1.41/#operation/ContainerArchive
    */
-  archive(query?: GetParamType<'ContainerArchiveInfo'>['query']) {
+  archive(query?: GetParamType<'ContainerArchive'>['query']) {
     return Container.archive({ id: this.Id }, query)
   }
 

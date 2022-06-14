@@ -12,7 +12,7 @@ const createContainer = async (
   body?: GetParamType<'ContainerCreate'>['body']['body'],
   t?: ExecutionContext<TestExecutionContext>
 ) => {
-  t?.teardown(() => Container.remove({ id: name }, { force: true }))
+  t?.teardown(() => Container.delete({ id: name }, { force: true }))
   return await Container.create(
     { name },
     {
@@ -168,9 +168,9 @@ test('static wait()', async (t) => {
   t.is(typeof wait.StatusCode, 'number')
 })
 
-test('static remove()', async (t) => {
-  const resp = await createContainer('container-remove', undefined)
-  await Container.remove({ id: resp.Id })
+test('static delete()', async (t) => {
+  const resp = await createContainer('container-delete', undefined)
+  await Container.delete({ id: resp.Id })
   const containers = await Container.list()
   t.false(containers.some((c) => c.Id === resp.Id))
 })

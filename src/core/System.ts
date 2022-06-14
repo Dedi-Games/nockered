@@ -56,7 +56,7 @@ export class System {
    * @param query Query parameters
    */
   static monitorEvents(query?: GetParamType<'SystemEvents'>['query']) {
-    return streamEndpoint('events', { searchParams: query })
+    return streamEndpoint('get', 'events', { searchParams: query })
   }
 
   /**

@@ -41,9 +41,14 @@ export function stringEndpoint<P = OptionsInit>(
 
 /**
  * Call stream endpoint
+ * @param method HTTP method
  * @param endpoint HTTP endpoint
  * @param options Optional options
  */
-export function streamEndpoint<P = OptionsInit>(endpoint: string, options?: P) {
-  return InstanceManager.getInstance().stream(endpoint, options)
+export function streamEndpoint<P = OptionsInit>(
+  method: HTTPAlias,
+  endpoint: string,
+  options?: P
+) {
+  return InstanceManager.getInstance().stream[method](endpoint, options)
 }
