@@ -8,9 +8,7 @@ export class System {
    * @description Validate credentials for a registry and, if available, get an identity token for accessing the registry without password.
    * @param authConfig Authentication to check
    */
-  static checkAuthConfiguration(
-    authConfig: GetParamType<'SystemAuth'>['body']['authConfig']
-  ) {
+  static auth(authConfig: GetParamType<'SystemAuth'>['body']['authConfig']) {
     return jsonEndpoint<GetResponseType<'SystemAuth', 200>>('post', 'auth', {
       json: authConfig
     })
@@ -19,7 +17,7 @@ export class System {
   /**
    * Get system information
    */
-  static getSystemInformation() {
+  static systemInfo() {
     return jsonEndpoint<GetResponseType<'SystemInfo', 200>>('get', 'info')
   }
 
@@ -27,7 +25,7 @@ export class System {
    * Get version
    * @description Returns the version of Docker that is running and various information about the system that Docker is running on.
    */
-  static getVersion() {
+  static version() {
     return jsonEndpoint<GetResponseType<'SystemVersion', 200>>('get', 'version')
   }
 
@@ -55,14 +53,14 @@ export class System {
    * @description Stream real-time events from the server.
    * @param query Query parameters
    */
-  static monitorEvents(query?: GetParamType<'SystemEvents'>['query']) {
+  static events(query?: GetParamType<'SystemEvents'>['query']) {
     return streamEndpoint('get', 'events', { searchParams: query })
   }
 
   /**
    * Get data usage information
    */
-  static getDataUsageInformation() {
+  static dataUsage() {
     return jsonEndpoint<GetResponseType<'SystemDataUsage', 200>>(
       'get',
       'system/df'
