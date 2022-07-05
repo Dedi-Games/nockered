@@ -17,6 +17,7 @@
     "test": "c8 ava"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "got": "^12.0.1"
   },
   "devDependencies": {

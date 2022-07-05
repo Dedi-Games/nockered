@@ -135,7 +135,7 @@ test('static update()', async (t) => {
 })
 
 test('static rename()', async (t) => {
-  const newName = 'new-name'
+  const newName = 'container-new-name'
   const resp = await createContainer('container-rename', undefined, t)
   await Container.rename({ id: resp.Id }, { name: newName })
   const inspect = await Container.inspect({ id: newName })

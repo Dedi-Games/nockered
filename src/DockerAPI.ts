@@ -1,5 +1,6 @@
 import { HTTPAlias, OptionsInit } from 'got'
 import InstanceManager from './InstanceManager.js'
+import { DeepRequired } from './utils/DeepRequired.js'
 
 export default class DockerAPI {
   constructor(prefixUrl: string) {
@@ -17,10 +18,10 @@ export function jsonEndpoint<R = {}, P = OptionsInit>(
   method: HTTPAlias,
   endpoint: string,
   options?: P
-): Promise<R> {
+): Promise<DeepRequired<R>> {
   return InstanceManager.getInstance()
     [method](endpoint, options)
-    .json() as Promise<R>
+    .json() as Promise<DeepRequired<R>>
 }
 
 /**
@@ -33,10 +34,10 @@ export function stringEndpoint<P = OptionsInit>(
   method: HTTPAlias,
   endpoint: string,
   options?: P
-): Promise<string> {
+): Promise<DeepRequired<string>> {
   return InstanceManager.getInstance()
     [method](endpoint, options)
-    .text() as Promise<string>
+    .text() as Promise<DeepRequired<string>>
 }
 
 /**
