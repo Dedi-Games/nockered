@@ -196,7 +196,8 @@ test('static prune()', async (t) => {
       pruneTest: 'true'
     }
   })
-  Container.stop({ id: resp.Id })
+  await Container.start({ id: resp.Id })
+  Container.stop({ id: resp.Id }, { t: 1 })
   await Container.wait({ id: resp.Id })
   const prune = await Container.prune({
     filters: JSON.stringify({ label: ['pruneTest'] })
