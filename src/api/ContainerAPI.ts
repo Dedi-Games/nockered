@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer'
+import { plainToInstance } from 'class-transformer'
 import { Container } from '../core/Container.js'
 import { GetParamType } from '../utils/GetParamType.js'
 
@@ -7,7 +7,7 @@ export class ContainerAPI {
    * List containers
    */
   static async list(query?: GetParamType<'ContainerList'>['query']) {
-    return plainToClass(Container, await Container.list(query))
+    return plainToInstance(Container, await Container.list(query))
   }
 
   /**
@@ -20,7 +20,7 @@ export class ContainerAPI {
       all: true,
       filters: JSON.stringify({ id: [id] })
     })
-    return plainToClass(Container, container[0])
+    return plainToInstance(Container, container[0])
   }
 
   /**
@@ -35,6 +35,6 @@ export class ContainerAPI {
       all: true,
       filters: JSON.stringify({ id: [createdContainer.Id] })
     })
-    return plainToClass(Container, container[0])
+    return plainToInstance(Container, container[0])
   }
 }
