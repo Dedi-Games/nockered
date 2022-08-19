@@ -12,8 +12,6 @@ test.beforeEach((t) => {
 
 test('static auth()', async (t) => {
   const resp = await System.auth({
-    username: 'hannibal',
-    password: 'xxxx',
     serveraddress: 'http://localhost:5000/'
   })
   t.is(typeof resp.Status, 'string')
