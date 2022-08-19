@@ -75,9 +75,7 @@ export class Swarm extends AbstractEndpoint<ISwarm> {
       'swarm/update',
       {
         searchParams: query,
-        json: {
-          body
-        }
+        json: body
       }
     )
   }
@@ -97,10 +95,13 @@ export class Swarm extends AbstractEndpoint<ISwarm> {
    * Unlock a locked manager
    * @link https://docs.docker.com/engine/api/v1.41/#tag/Swarm/operation/SwarmUnlock
    */
-  static unlock() {
+  static unlock(body: GetParamType<'SwarmUnlock'>['body']['body']) {
     return jsonEndpoint<GetResponseType<'SwarmUnlock', 200>>(
       'post',
-      'swarm/unlock'
+      'swarm/unlock',
+      {
+        json: body
+      }
     )
   }
 }
