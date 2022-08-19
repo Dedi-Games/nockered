@@ -17,10 +17,7 @@ export class Swarm extends AbstractEndpoint<ISwarm> {
    * @link https://docs.docker.com/engine/api/v1.41/#tag/Swarm/operation/SwarmInspect
    */
   static inspect() {
-    return jsonEndpoint<GetResponseType<'SwarmInspect', 200>>(
-      'get',
-      'swarm'
-    )
+    return jsonEndpoint<GetResponseType<'SwarmInspect', 200>>('get', 'swarm')
   }
 
   /**
@@ -78,7 +75,9 @@ export class Swarm extends AbstractEndpoint<ISwarm> {
       'swarm/update',
       {
         searchParams: query,
-        json: body
+        json: {
+          body
+        }
       }
     )
   }
