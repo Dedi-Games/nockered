@@ -1,4 +1,5 @@
 import ava, { TestFn } from 'ava'
+import { NodeAPI } from '../../src/api/NodeAPI.js'
 import { Node } from '../../src/core/Node.js'
 import { Swarm } from '../../src/core/Swarm.js'
 import DockerAPI from '../../src/index.js'
@@ -111,6 +112,48 @@ test.serial('static node-update()', async (t) => {
       { Role: 'manager', Availability: 'pause' }
     )
     const resp = await Node.inspect({ id: node[0].ID })
+    t.is(resp.Spec.Availability, 'pause')
+  }
+})
+
+test('static nodeApi-list()', async (t) => {
+  const resp = await NodeAPI.list()
+  t.true(resp[0] instanceof Node)
+})
+
+test('static nodeApi-get()', async (t) => {
+  const node = await NodeAPI.list()
+  if (node[0]) {
+    const resp = await NodeAPI.get(node[0].ID)
+    t.is(typeof resp.ID, 'string')
+  }
+})
+
+test('node-inspect()', async (t) => {
+  const node = await NodeAPI.list()
+  if (node[0]) {
+    const resp = await node[0].inspect()
+    t.is(typeof resp.ID, 'string')
+  }
+})
+
+test('node-delete()', async (t) => {
+  const node = await NodeAPI.list()
+  await t.throwsAsync(async () => {
+    if (node[0]) {
+      await node[0].delete()
+    }
+  })
+})
+
+test.serial('node-update()', async (t) => {
+  const node = await NodeAPI.list()
+  if (node[0] && node[0].Version.Index) {
+    await node[0].update(
+      { version: node[0].Version.Index },
+      { Role: 'manager', Availability: 'pause' }
+    )
+    const resp = await node[0].inspect()
     t.is(resp.Spec.Availability, 'pause')
   }
 })
