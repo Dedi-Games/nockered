@@ -1,4 +1,5 @@
-import ava, { ExecutionContext, TestFn } from 'ava'
+import ava, { TestFn } from 'ava'
+import { Node } from '../../src/core/Node.js'
 import { Swarm } from '../../src/core/Swarm.js'
 import DockerAPI from '../../src/index.js'
 import { TestExecutionContext } from '../../src/types/TestExecutionContext.js'
@@ -6,30 +7,28 @@ import { RequestError } from 'got'
 
 const test = ava as TestFn<TestExecutionContext>
 
-const initializeSwarm = async (t?: ExecutionContext<TestExecutionContext>) => {
-  t?.teardown(() => Swarm.leave({ force: true }))
+test.before(async (t) => {
+  t.context.DockerAPI = new DockerAPI('http://localhost:2375')
   return await Swarm.init({
     ListenAddr: '0.0.0.0:2377'
   })
-}
+})
+
+test.after.always(async (t) => {
+  t.context.DockerAPI = new DockerAPI('http://localhost:2375')
+  await Swarm.leave({ force: true })
+})
 
 test.beforeEach((t) => {
   t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
 })
 
-test.serial('static inspect()', async (t) => {
-  await initializeSwarm(t)
+test('static inspect()', async (t) => {
   const resp = await Swarm.inspect()
   t.is(typeof resp.ID, 'string')
 })
 
-test.serial('static init()', async (t) => {
-  const resp = await initializeSwarm(t)
-  t.is(typeof resp, 'string')
-})
-
-test.serial('static join()', async (t) => {
-  await initializeSwarm(t)
+test('static join()', async (t) => {
   await t.throwsAsync(
     async () => {
       await Swarm.join({
@@ -43,14 +42,7 @@ test.serial('static join()', async (t) => {
   )
 })
 
-test.serial('static leave()', async (t) => {
-  await initializeSwarm()
-  await Swarm.leave({ force: true })
-  t.pass()
-})
-
 test.serial('static update()', async (t) => {
-  await initializeSwarm(t)
   const swarm = await Swarm.inspect()
   await Swarm.update(
     { version: swarm.Version.Index, rotateManagerToken: true },
@@ -61,7 +53,6 @@ test.serial('static update()', async (t) => {
 })
 
 test.serial('static unlockKey()', async (t) => {
-  await initializeSwarm(t)
   const swarm = await Swarm.inspect()
   await Swarm.update(
     { version: swarm.Version.Index },
@@ -72,7 +63,6 @@ test.serial('static unlockKey()', async (t) => {
 })
 
 test.serial('static unlock()', async (t) => {
-  await initializeSwarm(t)
   const swarm = await Swarm.inspect()
   await Swarm.update(
     { version: swarm.Version.Index, rotateManagerUnlockKey: true },
@@ -88,4 +78,39 @@ test.serial('static unlock()', async (t) => {
       message: 'Response code 409 (Conflict)'
     }
   )
+})
+
+test('static node-list()', async (t) => {
+  const resp = await Node.list()
+  t.true(Array.isArray(resp))
+})
+
+test('static node-inspect()', async (t) => {
+  const node = await Node.list()
+  if (node[0]) {
+    const resp = await Node.inspect({ id: node[0].ID })
+    t.is(typeof resp.ID, 'string')
+  }
+})
+
+test('static node-delete()', async (t) => {
+  const node = await Node.list()
+  await t.throwsAsync(async () => {
+    if (node[0]) {
+      await Node.delete({ id: node[0].ID })
+    }
+  })
+})
+
+test.serial('static node-update()', async (t) => {
+  const node = await Node.list()
+  if (node[0]) {
+    await Node.update(
+      { id: node[0].ID },
+      { version: node[0].Version.Index },
+      { Role: 'manager', Availability: 'pause' }
+    )
+    const resp = await Node.inspect({ id: node[0].ID })
+    t.is(resp.Spec.Availability, 'pause')
+  }
 })
