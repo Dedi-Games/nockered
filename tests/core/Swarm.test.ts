@@ -9,14 +9,14 @@ import { RequestError } from 'got'
 const test = ava as TestFn<TestExecutionContext>
 
 test.before(async (t) => {
-  t.context.DockerAPI = new DockerAPI('http://localhost:2375')
+  t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
   return await Swarm.init({
     ListenAddr: '0.0.0.0:2377'
   })
 })
 
 test.after.always(async (t) => {
-  t.context.DockerAPI = new DockerAPI('http://localhost:2375')
+  t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
   await Swarm.leave({ force: true })
 })
 
