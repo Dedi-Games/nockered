@@ -1,12 +1,33 @@
-import ava, { TestFn } from 'ava'
+import ava, { ExecutionContext, TestFn } from 'ava'
 import { NodeAPI } from '../../src/api/NodeAPI.js'
 import { Node } from '../../src/core/Node.js'
+import { Secret } from '../../src/core/Secret.js'
 import { Swarm } from '../../src/core/Swarm.js'
 import DockerAPI from '../../src/index.js'
 import { TestExecutionContext } from '../../src/types/TestExecutionContext.js'
 import { RequestError } from 'got'
+import { GetParamType } from '../../src/utils/GetParamType.js'
 
 const test = ava as TestFn<TestExecutionContext>
+
+const createSecret = async (
+  name: string,
+  body?: GetParamType<'SecretCreate'>['body']['body'],
+  t?: ExecutionContext<TestExecutionContext>
+) => {
+  /**
+   * @exception
+   * SecretCreate should return Id based on the documentation
+   * but returns ID.
+   */
+  const secret: any = await Secret.create({
+    Name: name,
+    Data: 'VEhJUyBJUyBBIFRFU1Q=',
+    ...body
+  })
+  t?.teardown(() => Secret.delete({ id: secret.ID }))
+  return secret
+}
 
 test.before(async (t) => {
   t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
@@ -151,4 +172,27 @@ test.serial('node-update()', async (t) => {
     const resp = await node[0].inspect()
     t.is(resp.Spec.Availability, 'pause')
   }
+})
+
+test('static secret-list()', async (t) => {
+  const resp = await Secret.list()
+  t.true(Array.isArray(resp))
+})
+
+test('static secret-create()', async (t) => {
+  const resp = await createSecret('secret-create', undefined, t)
+  t.is(typeof resp.ID, 'string')
+})
+
+test('static secret-inspect()', async (t) => {
+  const resp = await createSecret('secret-inspect', undefined, t)
+  const inspect = await Secret.inspect({ id: resp.ID })
+  t.is(typeof inspect.ID, 'string')
+})
+
+test('static secret-delete()', async (t) => {
+  const resp = await createSecret('secret-delete', undefined)
+  await Secret.delete({ id: resp.ID })
+  const secrets = await Secret.list()
+  t.false(secrets.some((s) => s.ID === resp.ID))
 })
