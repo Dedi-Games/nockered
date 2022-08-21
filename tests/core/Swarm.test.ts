@@ -15,13 +15,8 @@ test.before(async (t) => {
   })
 })
 
-test.after.always(async (t) => {
-  t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
+test.after.always(async () => {
   await Swarm.leave({ force: true })
-})
-
-test.beforeEach((t) => {
-  t.context.DockerAPI = new DockerAPI('unix:/var/run/docker.sock:/v1.41')
 })
 
 test('static inspect()', async (t) => {
