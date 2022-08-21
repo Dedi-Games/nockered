@@ -76,34 +76,4 @@ export class Secret extends AbstractEndpoint<ISecret> {
   delete() {
     return Secret.delete({ id: this.ID })
   }
-
-  /**
-   * Update a Secret
-   * @link https://docs.docker.com/engine/api/v1.41/#tag/Secret/operation/SecretUpdate
-   */
-  static update(
-    path: GetParamType<'SecretUpdate'>['path'],
-    query: GetParamType<'SecretUpdate'>['query'],
-    body: GetParamType<'SecretUpdate'>['body']['body']
-  ) {
-    return jsonEndpoint<GetResponseType<'SecretUpdate', 200>>(
-      'post',
-      `secrets/${path.id}/update`,
-      {
-        searchParams: query,
-        json: body
-      }
-    )
-  }
-
-  /**
-   * Update a Secret
-   * @link https://docs.docker.com/engine/api/v1.41/#tag/Secret/operation/SecretUpdate
-   */
-  update(
-    query: GetParamType<'SecretUpdate'>['query'],
-    body: GetParamType<'SecretUpdate'>['body']['body']
-  ) {
-    return Secret.update({ id: this.ID }, query, body)
-  }
 }
