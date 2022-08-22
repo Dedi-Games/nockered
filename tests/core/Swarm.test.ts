@@ -1,5 +1,6 @@
 import ava, { ExecutionContext, TestFn } from 'ava'
 import { NodeAPI } from '../../src/api/NodeAPI.js'
+import { SecretAPI } from '../../src/api/SecretAPI.js'
 import { Node } from '../../src/core/Node.js'
 import { Secret } from '../../src/core/Secret.js'
 import { Swarm } from '../../src/core/Swarm.js'
@@ -21,6 +22,25 @@ const createSecret = async (
    * but returns ID.
    */
   const secret: any = await Secret.create({
+    Name: name,
+    Data: 'VEhJUyBJUyBBIFRFU1Q=',
+    ...body
+  })
+  t?.teardown(() => Secret.delete({ id: secret.ID }))
+  return secret
+}
+
+const createSecretWithAPI = async (
+  name: string,
+  body?: GetParamType<'SecretCreate'>['body']['body'],
+  t?: ExecutionContext<TestExecutionContext>
+) => {
+  /**
+   * @exception
+   * SecretCreate should return Id based on the documentation
+   * but returns ID.
+   */
+  const secret: any = await SecretAPI.create({
     Name: name,
     Data: 'VEhJUyBJUyBBIFRFU1Q=',
     ...body
@@ -193,6 +213,36 @@ test('static secret-inspect()', async (t) => {
 test('static secret-delete()', async (t) => {
   const resp = await createSecret('secret-delete', undefined)
   await Secret.delete({ id: resp.ID })
+  const secrets = await Secret.list()
+  t.false(secrets.some((s) => s.ID === resp.ID))
+})
+
+test('static secretAPI-list()', async (t) => {
+  await createSecret('secretAPI-list', undefined, t)
+  const resp = await SecretAPI.list()
+  t.true(resp[0] instanceof Secret)
+})
+
+test('static secretAPI-get()', async (t) => {
+  const resp = await createSecret('secretAPI-get', undefined, t)
+  const secret = await SecretAPI.get(resp.ID)
+  t.is(typeof secret.ID, 'string')
+})
+
+test.serial('static secretAPI-create()', async (t) => {
+  const resp = await createSecretWithAPI('secretAPI-create', undefined, t)
+  t.true(resp instanceof Secret)
+})
+
+test.serial('secret-inspect()', async (t) => {
+  const resp = await createSecretWithAPI('secretAPI-inspect', undefined, t)
+  const inspect = await resp.inspect()
+  t.is(typeof inspect.ID, 'string')
+})
+
+test.serial('secret-delete()', async (t) => {
+  const resp = await createSecretWithAPI('secretAPI-delete', undefined)
+  await resp.delete()
   const secrets = await Secret.list()
   t.false(secrets.some((s) => s.ID === resp.ID))
 })
