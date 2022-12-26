@@ -32,4 +32,4 @@ jobs:
     - name: Build the source code
       run: yarn build
     - name: Run tests
-      run: docker-compose up -d && yarn test
+      run: docker-compose up -d && yarn test-unix

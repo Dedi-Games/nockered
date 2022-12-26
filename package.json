@@ -14,18 +14,20 @@
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
-    "test": "c8 ava"
+    "test-windows": "cross-env DOCKER_DAEMON_URL=http://localhost:2375/v1.41 c8 ava",
+    "test-unix": "cross-env DOCKER_DAEMON_URL=unix:/var/run/docker.sock:/v1.41 c8 ava"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
     "got": "^12.0.1"
   },
   "devDependencies": {
+    "@esbuild-kit/esm-loader": "^2.5.4",
     "@sindresorhus/tsconfig": "^3.0.1",
     "@types/node": "^18.0.0",
     "ava": "^4.0.1",
     "c8": "^7.11.3",
-    "esbuild-node-loader": "^0.8.0",
+    "cross-env": "^7.0.3",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
@@ -39,7 +41,7 @@
     },
     "nodeArguments": [
       "--no-warnings",
-      "--loader=esbuild-node-loader",
+      "--loader=@esbuild-kit/esm-loader",
       "--experimental-specifier-resolution=node"
     ]
   },
