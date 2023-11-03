@@ -1,47 +1,44 @@
 {
   "name": "@nockered/sdk",
-  "version": "0.2.3",
+  "version": "0.0.1",
   "license": "MIT",
   "description": "A simple Docker SDK for Node.JS",
-  "exports": "./dist/src/index.js",
-  "types": "dist/src",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "files": [
-    "dist/src"
+    "./dist/"
   ],
   "engines": {
     "node": ">=16.13"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
-    "test-windows": "cross-env DOCKER_DAEMON_URL=http://localhost:2375/v1.41 c8 ava",
-    "test-unix": "cross-env DOCKER_DAEMON_URL=unix:/var/run/docker.sock:/v1.41 c8 ava"
+    "test-windows": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS='--loader=ts-node/esm' DOCKER_DAEMON_URL=http://localhost:2375/v1.41 c8 ava",
+    "test-windows:watch": "yarn test-windows --watch",
+    "test-unix": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS='--loader=ts-node/esm' DOCKER_DAEMON_URL=unix:/var/run/docker.sock:/v1.41 c8 ava",
+    "test-unix:watch": "yarn test-unix --watch"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
     "got": "^13.0.0"
   },
   "devDependencies": {
-    "@esbuild-kit/esm-loader": "^2.5.4",
     "@sindresorhus/tsconfig": "^5.0.0",
-    "@types/node": "^20.8.10",
     "ava": "^5.1.1",
     "c8": "^8.0.1",
     "cross-env": "^7.0.3",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "ava": {
-    "files": [
-      "tests/**/*"
-    ],
     "extensions": {
       "ts": "module"
     },
     "nodeArguments": [
       "--no-warnings",
-      "--loader=@esbuild-kit/esm-loader",
       "--experimental-specifier-resolution=node"
     ]
   },

@@ -1,4 +1,1 @@
-import DockerAPI from './DockerAPI.js'
-
-export default DockerAPI
-export { DockerAPI }
+export * from './common/index.js'
